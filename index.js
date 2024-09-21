@@ -98,24 +98,21 @@ class Projectile {
 };
 
 const player = new Player();
-const projectiles = [new Projectile({
-  position: {
-    x: 300,
-    y: 300,
-  },
-  velocity: {
-    x: 0,
-    y: -5,
-  }
-})]
+const projectiles = [];
 
 function animate() {
   requestAnimationFrame(animate);
   c.fillStyle = 'black';
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
-  projectiles.forEach(projectile => {
-    projectile.update();
+  projectiles.forEach((projectile, index) => {
+    if (projectile.position.y + projectile.radius <= 0) {
+      setTimeout(() => {
+        projectiles.splice(index, 1);
+      }, 0);
+    } else {
+      projectile.update();
+    }
   })
 
   if (keys.a.pressed && player.position.x >= 0) {
@@ -144,6 +141,17 @@ addEventListener('keydown', ({ key }) => {
       keys.d.pressed = true;
       break;
     case ' ':
+      keys.space.pressed = true;
+      projectiles.push(new Projectile({
+        position: {
+          x: player.position.x + player.width / 2,
+          y: player.position.y,
+        },
+        velocity: {
+          x: 0,
+          y: -10,
+        }
+      }))
       break;
 
     default:
